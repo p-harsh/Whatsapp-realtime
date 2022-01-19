@@ -1,0 +1,68 @@
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    flex: 0.35;
+}
+
+.sidebar__header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+    border-right: 1px solid lightgrey;
+}
+
+.sidebar__headerRight{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    min-width: 10vw;
+}
+
+.sidebar__search{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #f6f6f6;
+    height: 39px;
+    padding:10px;
+}
+
+.sidebar__search input{
+    width: 80%;
+    padding: 8px;
+    border-radius: 4px;
+    margin-left: 16px;
+}
+
+.sidebar__searchContainer{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items:center;
+}
+
+.sidebar__chats{
+    flex: 1;
+    background-color: white;
+    overflow:scroll;
+    position: relative;
+}
+
+.sidebar__chats button{
+    position:absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 99;
+    border: 1px solid lightgrey;
+    color: white;
+    background-color: rgba(0, 102, 218, 0.767);
+}
+
+.sidebar__chats button:hover{
+    background-color: rgb(0, 102, 218);
+}
+
+.modal__container .MuiButton-contained{
+    margin-top: 16px;
+}
