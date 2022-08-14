@@ -11,6 +11,8 @@ const app = express();
 app.use(express.json());
 app.use(Cors());
 
+const PORT = process.env.port || 5000;
+
 
 mongoose.connect(process.env.DB_CONNECTION, { useNewURLParser: true })
     .then(() => console.log('connected to DB!'))
@@ -59,12 +61,19 @@ db.once('open', () => {
     })
 })
 
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
+    app.use(express.static("client/build"));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname + "/client/build/index.html"));
+    });
+}
 
-app.get('/', (req, res) => {
+
+app.get('/api', (req, res) => {
     res.status(200).json({ message: 'Working Good!!' })
 })
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -103,7 +112,7 @@ app.post('/login', async (req, res) => {
 });
 
 
-app.post('/message/sync', (req, res) => {
+app.post('/api/message/sync', (req, res) => {
     const messagePost = req.body;
     const roomName = req.body['room'];
     db.collection(roomName);
@@ -119,7 +128,7 @@ app.post('/message/sync', (req, res) => {
     })
 })
 
-app.get('/message/sync/:id', (req, res) => {
+app.get('/api/message/sync/:id', (req, res) => {
     let room = req.params.id;
     const Message = mongoose.model(room, messageSchema, room);
     Message.find((err, data) => {
@@ -130,7 +139,7 @@ app.get('/message/sync/:id', (req, res) => {
     })
 })
 
-app.get('/user/:username', async (req, res) => {
+app.get('/api/user/:username', async (req, res) => {
     const username = req.params.username;
     try {
         const existingUser = await User.findOne({ username });
@@ -146,7 +155,7 @@ app.get('/user/:username', async (req, res) => {
     }
 })
 
-app.post('/room/:username', async (req, res) => {
+app.post('/api/room/:username', async (req, res) => {
     const user = req.params.username;
     const room__name = req.body.room;
     try {
@@ -157,7 +166,7 @@ app.post('/room/:username', async (req, res) => {
     }
 })
 
-app.get('/room/:username', async (req, res) => {
+app.get('/api/room/:username', async (req, res) => {
     const username = req.params.username;
     try {
         const existingUser = await Room.findOne({ username });
@@ -166,7 +175,5 @@ app.get('/room/:username', async (req, res) => {
         res.send(error);
     }
 })
-
-let PORT = process.env.port || 5000;
 
 app.listen(PORT);
