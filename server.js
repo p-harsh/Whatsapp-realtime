@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(Cors());
 
-const PORT = process.env.port || 5000;
+const PORT = process.env.port || 3000;
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
     app.use(express.static("client/build"));
