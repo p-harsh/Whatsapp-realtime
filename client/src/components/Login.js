@@ -23,7 +23,7 @@ const Login = () => {
                 setTimeout(() => {
                     setOpen(false);
                 }, 2000);
-                history.push('/');
+                history.push('/dashboard');
                 console.log(history)
                 window.location.reload()
                 sessionStorage.setItem('username', username);

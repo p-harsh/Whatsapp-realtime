@@ -12,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router history={history}>
       <Routes>
-        <Route exact path='/' element={isAuthenticated ? <App /> : <Navigate replace to='/login' />} />
+        <Route exact path='/dashboard' element={isAuthenticated ? <App /> : <Navigate replace to='/login' />} />
         <Route exact path='/login' element={<Login />} />
         <Route path='/' element={() => { return (<h2>404</h2>) }} />
       </Routes>
