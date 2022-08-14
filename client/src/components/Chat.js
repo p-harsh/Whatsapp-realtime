@@ -3,7 +3,7 @@ import { Avatar, IconButton, Card } from '@material-ui/core';
 import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons'
 import SendIcon from '@material-ui/icons/Send';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
-import axios from '../axios'
+import axios from 'axios'
 
 import './Chat.css'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import './Login.css'
-import axios from '../axios'
+import axios from 'axios'
 import { TextField, Button, Snackbar, IconButton } from '@material-ui/core'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'

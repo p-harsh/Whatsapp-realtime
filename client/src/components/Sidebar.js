@@ -6,7 +6,7 @@ import { Avatar, IconButton, Modal, Box, Button, Typography, TextField } from '@
 import { SearchOutlined } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import axios from '../axios'
+import axios from 'axios'
 import history from '../history.js'
 
 // import Modal from '@mui/material';

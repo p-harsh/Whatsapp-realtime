@@ -6,12 +6,20 @@ import User from './models/dbUser.js'
 import 'dotenv/config';
 import Pusher from 'pusher'
 import bcrypt from 'bcrypt';
+import path from 'path';
 
 const app = express();
 app.use(express.json());
 app.use(Cors());
 
 const PORT = process.env.port || 5000;
+
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
+    app.use(express.static("client/build"));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname + "/client/build/index.html"));
+    });
+}
 
 
 mongoose.connect(process.env.DB_CONNECTION, { useNewURLParser: true })
@@ -61,16 +69,12 @@ db.once('open', () => {
     })
 })
 
-if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
-    app.use(express.static("client/build"));
-    app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname + "/client/build/index.html"));
-    });
-}
-
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Working Good!!' })
+})
 
 app.get('/api', (req, res) => {
-    res.status(200).json({ message: 'Working Good!!' })
+    res.status(200).json({ message: 'API Working Good!!' })
 })
 
 app.post('/api/login', async (req, res) => {
