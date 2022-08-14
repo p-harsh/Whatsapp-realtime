@@ -73,13 +73,13 @@ db.once('open', () => {
     })
 })
 
-// app.get('/', (req, res) => {
-//     res.status(200).json({ message: 'Working Good!!' })
-// })
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Working Good!!' })
+})
 
-// app.get('/api', (req, res) => {
-//     res.status(200).json({ message: 'API Working Good!!' })
-// })
+app.get('/api', (req, res) => {
+    res.status(200).json({ message: 'API Working Good!!' })
+})
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
