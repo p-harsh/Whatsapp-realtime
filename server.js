@@ -5,16 +5,20 @@ import Room from './models/dbRoom.js'
 import User from './models/dbUser.js'
 import 'dotenv/config';
 import Pusher from 'pusher'
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+// import csrf from 'csurf';
+// import session from 'express-session'
+import auth from './middleware/auth.js'
 
 const app = express();
 app.use(express.json());
 app.use(Cors());
+app.use(helmet());
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
@@ -91,25 +95,45 @@ app.post('/api/login', async (req, res) => {
             const isPasswordConfirmed = await bcrypt.compare(password, existingUser.password);
 
             if (isPasswordConfirmed) {
-                res.status(200).json({ message: 'Successfully Signed In!!' });
+                const token = jwt.sign({username: username},
+                    process.env.TOKEN_KEY,{
+                        expiresIn: "2h"
+                    })
+                res.cookie("jwtToken", token, {
+                    secure: true,
+                    httpOnly: true,
+                });
+                res.status(200).json({ message: 'Successfully Signed In!!', username, token });
             }
             else {
                 res.status(400).json({ message: 'Invalid Username or Password' })
             }
         }
         else {
-            const hashedPassword = await bcrypt.hash(password, 12);
+            const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
+            console.log("p");
             const room = [];
             const room__Data = { username: username, room: room }
-            User.create({ username, password: hashedPassword }, (err, data) => {
-                if (err)
+            User.create({ username, password: hashedPassword}, (err, data)=>{
+                if(err)
                     res.status(505).json({ message: "Something went wrong" });
-                else {
+                else{
+                    const token = jwt.sign(
+                        { user_id: data._id, username},
+                        process.env.TOKEN_KEY, {
+                        expiresIn: "2h"
+                    });
+                    data.token = token;
                     Room.create(room__Data, (err, data) => {
                         if (err)
                             res.status(505).json({ message: err });
-                        else
-                            res.status(200).json({ message: 'Successfully Signed Up', data: data });
+                        else{
+                            res.cookie(`jwtToken`, `${token}`, {
+                                secure: true,
+                                httpOnly: true
+                            });
+                            res.status(200).json({ message: 'Successfully Signed Up', data: data, token: token });
+                        }
                     })
                 }
             })
@@ -120,7 +144,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.post('/api/message/sync', (req, res) => {
+app.post('/api/message/sync', auth, (req, res) => {
     const messagePost = req.body;
     const roomName = req.body['room'];
     db.collection(roomName);
@@ -136,7 +160,7 @@ app.post('/api/message/sync', (req, res) => {
     })
 })
 
-app.get('/api/message/sync/:id', (req, res) => {
+app.get('/api/message/sync/:id', auth, (req, res) => {
     let room = req.params.id;
     const Message = mongoose.model(room, messageSchema, room);
     Message.find((err, data) => {
@@ -163,7 +187,7 @@ app.get('/api/user/:username', async (req, res) => {
     }
 })
 
-app.post('/api/room/:username', async (req, res) => {
+app.post('/api/room/:username', auth, async (req, res) => {
     const user = req.params.username;
     const room__name = req.body.room;
     try {
@@ -174,7 +198,7 @@ app.post('/api/room/:username', async (req, res) => {
     }
 })
 
-app.get('/api/room/:username', async (req, res) => {
+app.get('/api/room/:username', auth,  async (req, res) => {
     const username = req.params.username;
     try {
         const existingUser = await Room.findOne({ username });
