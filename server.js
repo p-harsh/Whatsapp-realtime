@@ -15,10 +15,10 @@ import helmet from 'helmet';
 import auth from './middleware/auth.js'
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use(Cors());
 app.use(helmet());
-app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
@@ -99,11 +99,11 @@ app.post('/api/login', async (req, res) => {
                     process.env.TOKEN_KEY,{
                         expiresIn: "2h"
                     })
-                res.cookie("jwtToken", token, {
-                    secure: true,
-                    httpOnly: true,
-                });
-                res.status(200).json({ message: 'Successfully Signed In!!', username, token });
+                // res.cookie(`jwttoken`, `${token}`, {
+                    // httpOnly: true,
+                // });
+                console.log(res);
+                res.send({ message: 'Successfully Signed In!!', username, token });
             }
             else {
                 res.status(400).json({ message: 'Invalid Username or Password' })
@@ -128,11 +128,11 @@ app.post('/api/login', async (req, res) => {
                         if (err)
                             res.status(505).json({ message: err });
                         else{
-                            res.cookie(`jwtToken`, `${token}`, {
-                                secure: true,
-                                httpOnly: true
-                            });
-                            res.status(200).json({ message: 'Successfully Signed Up', data: data, token: token });
+                            // res.cookie(`jwtToken`, `${token}`, {
+                            //     secure: true,
+                            //     httpOnly: true
+                            // });
+                            res.status(200).send({ message: 'Successfully Signed Up', data: data, token: token });
                         }
                     })
                 }
