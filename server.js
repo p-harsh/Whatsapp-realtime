@@ -64,6 +64,7 @@ db.once('open', () => {
         if (change.operationType === 'insert') {
             const messageDetails = change.fullDocument;
             const collectionRoomName = change['ns']['coll'];
+            // console.log(change);
             // console.log(collectionRoomName);
             pusher.trigger(collectionRoomName, 'inserted', {
                 username: messageDetails.username,
@@ -102,7 +103,6 @@ app.post('/api/login', async (req, res) => {
                 // res.cookie(`jwttoken`, `${token}`, {
                     // httpOnly: true,
                 // });
-                console.log(res);
                 res.send({ message: 'Successfully Signed In!!', username, token });
             }
             else {
@@ -111,7 +111,7 @@ app.post('/api/login', async (req, res) => {
         }
         else {
             const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
-            console.log("p");
+            // console.log("p");
             const room = [];
             const room__Data = { username: username, room: room }
             User.create({ username, password: hashedPassword}, (err, data)=>{
@@ -205,6 +205,14 @@ app.get('/api/room/:username', auth,  async (req, res) => {
         res.status(200).send({ existingUser });
     } catch (error) {
         res.send(error);
+    }
+})
+
+app.get('/api/isAuth', auth, async(req, res) => {
+    try{res.status(200).send({"message":"Authenticated!!"})
+    }
+    catch(err){
+        res.status(500).send({"message": "Not Authenticated"});
     }
 })
 
